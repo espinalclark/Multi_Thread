@@ -1,0 +1,5 @@
+mysql-connector-python==8.1.0
+requests==2.32.0
+bcrypt==4.1.0
+tk==0.1.0
+
