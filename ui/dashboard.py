@@ -9,7 +9,7 @@ class DashboardApp(tk.Tk):
         super().__init__()
         self.user_data = user_data
         self.title(f"Multi-Thread Downloader - Bienvenido {user_data[1]}")
-        self.geometry("650x450")
+        self.geometry("650x500")
         self.resizable(False, False)
         self.configure(bg="#1E1E1E")
 
@@ -42,6 +42,11 @@ class DashboardApp(tk.Tk):
         self.threads_entry.insert(0, "4")
         self.threads_entry.pack(pady=(0, 10))
 
+        ttk.Label(self, text="Timeout por hilo (segundos):").pack(anchor="w", padx=30)
+        self.timeout_entry = ttk.Entry(self, width=10)
+        self.timeout_entry.insert(0, "60")
+        self.timeout_entry.pack(pady=(0, 10))
+
         self.progress = ttk.Progressbar(self, orient="horizontal", length=550, mode="determinate")
         self.progress.pack(pady=(20, 10))
 
@@ -56,8 +61,9 @@ class DashboardApp(tk.Tk):
         filename = self.filename_entry.get().strip() or None
         try:
             num_threads = int(self.threads_entry.get())
+            timeout = int(self.timeout_entry.get())
         except ValueError:
-            messagebox.showerror("Error", "Número de hilos inválido")
+            messagebox.showerror("Error", "Número de hilos o timeout inválido")
             return
 
         if not url:
@@ -65,19 +71,18 @@ class DashboardApp(tk.Tk):
             return
 
         self.progress["value"] = 0
-        threading.Thread(target=self.download_file, args=(url, filename, num_threads)).start()
+        threading.Thread(target=self.download_file, args=(url, filename, num_threads, timeout)).start()
 
-    def download_file(self, url, filename, num_threads):
+    def download_file(self, url, filename, num_threads, timeout):
         try:
             def progress_callback(percent):
                 self.progress["value"] = percent
 
             dest_dir = os.path.join(os.getcwd(), "downloads")
-            file_path = start_download(url, dest_dir, num_threads, filename, progress_callback)
+            file_path = start_download(url, dest_dir, num_threads, filename, progress_callback, timeout)
             self.history_text.insert(tk.END, f"✅ {file_path}\n")
             messagebox.showinfo("Descarga completada", f"Archivo descargado en:\n{file_path}")
         except Exception as e:
             self.history_text.insert(tk.END, f"❌ Error: {e}\n")
             messagebox.showerror("Error", f"No se pudo descargar el archivo:\n{e}")
-
 
