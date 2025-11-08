@@ -1,5 +1,5 @@
-import mysql.connector
-from mysql.connector import Error
+import mariadb
+import sys
 from utils.config import DATABASE_CONFIG
 
 def get_connection():
@@ -7,7 +7,7 @@ def get_connection():
     Conecta con la base de datos MariaDB y devuelve la conexión
     """
     try:
-        conn = mysql.connector.connect(
+        conn = mariadb.connect(
             host=DATABASE_CONFIG["host"],
             user=DATABASE_CONFIG["user"],
             password=DATABASE_CONFIG["password"],
@@ -15,7 +15,7 @@ def get_connection():
             port=DATABASE_CONFIG["port"]
         )
         return conn
-    except Error as e:
+    except mariadb.Error as e:
         print(f"Error de conexión: {e}")
-        return None
+        sys.exit(1)
 
