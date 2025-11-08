@@ -1,66 +1,108 @@
-# ui/login_window.py
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 from auth.login import LoginApp as AuthLoginApp
-from ui.dashboard import DashboardApp  # Importa tu dashboard
+from ui.dashboard import DashboardApp  # Tu dashboard existente
+
+class RoundedButton(tk.Canvas):
+    """Botón redondeado para Tkinter"""
+    def __init__(self, parent, text="", command=None, radius=20, width=180, height=45, bg="#0078D7", fg="white", font=("Segoe UI Semibold", 14)):
+        super().__init__(parent, borderwidth=0, highlightthickness=0, bg=parent["bg"], width=width, height=height)
+        self.command = command
+        self.radius = radius
+        self.bg = bg
+        self.fg = fg
+        self.font = font
+        self.width = width
+        self.height = height
+        self.text = text
+        self.draw_button()
+        self.bind("<Button-1>", self.on_click)
+        self.bind("<Enter>", lambda e: self.itemconfig("rect", fill="#005A9E"))
+        self.bind("<Leave>", lambda e: self.itemconfig("rect", fill=self.bg))
+
+    def draw_button(self):
+        r = self.radius
+        w = self.width
+        h = self.height
+        self.create_rectangle(r, 0, w-r, h, fill=self.bg, outline=self.bg, tags="rect")
+        self.create_oval(0, 0, r*2, h, fill=self.bg, outline=self.bg, tags="rect")
+        self.create_oval(w-2*r, 0, w, h, fill=self.bg, outline=self.bg, tags="rect")
+        self.create_text(w//2, h//2, text=self.text, fill=self.fg, font=self.font)
+
+    def on_click(self, event):
+        if self.command:
+            self.command()
 
 class LoginWindow(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Login - MultiThread Manager")
+        self.title("Multi_Thread")
         self.geometry("400x500")
+        self.configure(bg="#1a1a1a")
         self.resizable(False, False)
-        self.configure(bg="#1E1E1E")
-        self.center_window()
-        self.create_styles()
         self.create_widgets()
 
-    def center_window(self):
-        w, h = 400, 500
-        x = (self.winfo_screenwidth() // 2) - (w // 2)
-        y = (self.winfo_screenheight() // 2) - (h // 2)
-        self.geometry(f"{w}x{h}+{x}+{y}")
-
-    def create_styles(self):
-        style = ttk.Style(self)
-        style.theme_use("clam")
-        style.configure("TLabel", background="#1E1E1E", foreground="#FFFFFF", font=("Segoe UI", 11))
-        style.configure("TEntry", padding=8, font=("Segoe UI", 11),
-                        fieldbackground="#2C2C2C", foreground="#FFFFFF", relief="flat")
-        style.configure("TButton", font=("Segoe UI Semibold", 11), padding=10,
-                        background="#0078D7", foreground="#FFFFFF", borderwidth=0)
-        style.map("TButton", background=[("active", "#005A9E")])
-
     def create_widgets(self):
-        ttk.Label(self, text="Iniciar Sesión", font=("Segoe UI Semibold", 20)).pack(pady=(60, 10))
-        ttk.Label(self, text="Usuario:").pack(anchor="w", padx=60)
-        self.username = ttk.Entry(self, width=30)
-        self.username.pack(pady=(0, 15))
+        frame = tk.Frame(self, bg="#1a1a1a")
+        frame.place(relx=0.5, rely=0.5, anchor="c")
 
-        ttk.Label(self, text="Contraseña:").pack(anchor="w", padx=60)
-        self.password = ttk.Entry(self, width=30, show="•")
-        self.password.pack(pady=(0, 25))
+        # Título
+        tk.Label(frame, text="Multi_Thread", fg="white", bg="#1a1a1a",
+                 font=("Segoe UI Semibold", 24)).pack(pady=(0,40))
 
-        ttk.Button(self, text="Ingresar", command=self.login).pack(pady=10, ipadx=10)
+        # --- Usuario ---
+        user_frame = tk.Frame(frame, bg="#1a1a1a")
+        user_frame.pack(fill="x", pady=(0,20))
+        tk.Label(user_frame, text="✉️", bg="#1a1a1a", fg="white", font=("Segoe UI", 12)).pack(side="left", padx=(0,5))
+        self.user_entry = tk.Entry(user_frame, fg="white", bg="#1a1a1a", insertbackground="white",
+                                   font=("Segoe UI", 12), bd=0, highlightthickness=0)
+        self.user_entry.pack(side="left", fill="x", expand=True)
+        tk.Frame(frame, bg="white", height=1).pack(fill="x", pady=(0,15))
+
+        # --- Contraseña ---
+        pass_frame = tk.Frame(frame, bg="#1a1a1a")
+        pass_frame.pack(fill="x", pady=(0,20))
+        tk.Label(pass_frame, text="🔒", bg="#1a1a1a", fg="white", font=("Segoe UI", 12)).pack(side="left", padx=(0,5))
+        self.pass_entry = tk.Entry(pass_frame, fg="white", bg="#1a1a1a", insertbackground="white",
+                                   font=("Segoe UI", 12), bd=0, highlightthickness=0, show="•")
+        self.pass_entry.pack(side="left", fill="x", expand=True)
+        tk.Frame(frame, bg="white", height=1).pack(fill="x", pady=(0,15))
+
+        # Mostrar contraseña
+        self.show_password = tk.BooleanVar(value=False)
+        tk.Checkbutton(frame, text="Mostrar contraseña", fg="white", bg="#1a1a1a",
+                       font=("Segoe UI", 10), selectcolor="#1a1a1a",
+                       activebackground="#1a1a1a", activeforeground="white",
+                       variable=self.show_password, command=self.toggle_password,
+                       bd=0, highlightthickness=0).pack(anchor="w", pady=(0,20))
+
+        # Botón login redondeado
+        login_btn = RoundedButton(frame, text="Login", command=self.login)
+        login_btn.pack(pady=10)
+
+    def toggle_password(self):
+        self.pass_entry.config(show="" if self.show_password.get() else "•")
 
     def login(self):
-        user = self.username.get().strip()
-        pwd = self.password.get().strip()
-
+        user = self.user_entry.get().strip()
+        pwd = self.pass_entry.get().strip()
         if not user or not pwd:
             messagebox.showwarning("Campos vacíos", "Completa todos los campos")
             return
 
-        # Usar AuthLoginApp para autenticar
         auth = AuthLoginApp()
         user_data, error = auth.login_user(user, pwd)
-
         if error:
             messagebox.showerror("Error", error)
             return
 
-        # Login exitoso: cerrar login y abrir dashboard
+        # Convertimos tuple a dict para dashboard
+        user_dict = {"id": user_data[0], "email": user_data[1]}
         self.destroy()
-        dashboard = DashboardApp(user_data)  # <-- pasamos user_data
+        dashboard = DashboardApp(user_dict)
         dashboard.mainloop()
+
+if __name__ == "__main__":
+    app = LoginWindow()
+    app.mainloop()
 
