@@ -52,7 +52,7 @@ Perfecto para:
     └── logger.py
 ```
 
-> Nota: `xd.txt` se utiliza temporalmente durante la instalación para levantar el servidor. Eliminar o reemplazar antes de producción.
+> Nota: `xd.txt` se utiliza temporalmente durante la instalación para levantar el servidor. Eliminar
 
 ---
 
@@ -117,23 +117,6 @@ python main.py
 
 * `test_db.py`: prueba de conexión y validación de tablas.
 * Logs: revisar `utils/logger.py` y la carpeta de logs configurada.
-
----
-
-## Buenas prácticas / Seguridad
-
-* No almacenar credenciales en texto plano: usar variables de entorno o un archivo `.env` fuera del repositorio.
-* Revisar y rotar claves con regularidad.
-* Limitar permisos del usuario de la base de datos.
-* Revisar la carpeta `downloads/` para evitar sobreescrituras inesperadas.
-
----
-
-## Contribución
-
-1. Fork del repo
-2. Crear branch: `feature/mi-mejora`
-3. Commit y PR explicando el cambio
 
 ---
 
