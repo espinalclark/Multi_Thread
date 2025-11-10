@@ -1,0 +1,21 @@
+# --- Base de datos ---
+mariadb
+
+# --- Cifrado de contraseñas ---
+bcrypt
+
+# --- Interfaz gráfica (PyQt6 para el login UI) ---
+PyQt6
+
+# --- Peticiones HTTP y descargas ---
+requests
+
+# --- Utilidades y progreso ---
+tqdm
+
+# --- Variables de entorno y configuración ---
+python-dotenv
+
+# --- Compatibilidad general y utilidades ---
+Pillow
+
