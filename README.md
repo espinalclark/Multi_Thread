@@ -5,6 +5,7 @@
 > Minimalista. Robusto. Diseñado para exprimir el ancho de banda, no para romper reglas.
 
 ---
+![multi](assets/multi.jpeg)
 
 ##  Resumen
 
