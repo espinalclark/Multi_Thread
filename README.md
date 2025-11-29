@@ -128,5 +128,4 @@ python main.py
 Repositorio oficial: `https://github.com/espinalclark/Multi_Thread`
 
 ---
-##
 
